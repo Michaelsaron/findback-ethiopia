@@ -10,7 +10,7 @@ const reportRoutes = require("./routes/report.routes");
 const app = express();
 
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN
+  origin: ["http://localhost:5173", "http://localhost:5174"]
 }));
 
 app.use(express.json());
