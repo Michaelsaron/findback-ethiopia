@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     // 1. Read the area from the URL
-    const { area } = req.query;
+    const { area, type, category } = req.query;
 
     // 2. Build the MongoDB filter
     const filter = {};
@@ -16,6 +16,23 @@ router.get("/", async (req, res) => {
     if (area) {
       filter["location.area"] = area;
     }
+     
+    // Filter by lost or found
+    if (type) {
+      if (!["lost", "found"].includes(type)) {
+        return res.status(400).json({
+        success: false,
+        message: "Type must be lost or found"
+     });
+    }
+
+     filter.type = type;
+    }
+
+     // Filter by category
+     if (category) {
+     filter.category = category;
+      }
 
     // 3. Search MongoDB
     const reports = await Report.find(filter);
