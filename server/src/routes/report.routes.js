@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     // 1. Read the area from the URL
-    const { area, type, category } = req.query;
+    const { area, type, category, search } = req.query;
 
     // 2. Build the MongoDB filter
     const filter = {};
@@ -32,7 +32,30 @@ router.get("/", async (req, res) => {
      // Filter by category
      if (category) {
      filter.category = category;
-      }
+}
+
+
+if (search) {
+  if (typeof search !== "string" || search.trim().length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Search must be text up to 100 characters"
+    });
+  }
+
+  const keyword = search.trim();
+
+  if (keyword) {
+    // Escape special characters used by regular expressions
+    const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    filter.$or = [
+      { title: { $regex: safeKeyword, $options: "i" } },
+      { description: { $regex: safeKeyword, $options: "i" } }
+    ];
+  }
+}
+
 
     // 3. Search MongoDB
     const reports = await Report.find(filter);
