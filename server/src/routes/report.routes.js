@@ -4,23 +4,39 @@ const Report = require("../models/Report");
 
 const router = express.Router();
 
-// GET /api/v1/reports
+
 router.get("/", async (req, res) => {
   try {
-    const reports = await Report.find();
+    // 1. Read the area from the URL
+    const { area } = req.query;
 
+    // 2. Build the MongoDB filter
+    const filter = {};
+
+    if (area) {
+      filter["location.area"] = area;
+    }
+
+    // 3. Search MongoDB
+    const reports = await Report.find(filter);
+
+    // 4. Return the results
     res.status(200).json({
       success: true,
       count: reports.length,
       data: reports
     });
+
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: "Failed to fetch reports"
     });
   }
 });
+
 
 
 router.post("/", async (req, res) => {
