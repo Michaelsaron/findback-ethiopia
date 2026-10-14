@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import ReportCard from "./components/ReportCard";
+import ReportFilters from "./components/ReportFilters";
+
 
 const API_URL = "http://localhost:5001/api/v1/reports";
 
@@ -82,48 +84,17 @@ function App() {
           <p>Search for lost items or browse found belongings.</p>
         </div>
 
-        <div className="filters">
-          <input
-            placeholder="Search items..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-
-          <input
-            placeholder="Area (e.g. Megenagna)"
-            value={area}
-            onChange={(e) => {
-              setArea(e.target.value);
-              setPage(1);
-            }}
-          />
-
-          <select
-            value={type}
-            onChange={(e) => {
-              setType(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">All reports</option>
-            <option value="lost">Lost</option>
-            <option value="found">Found</option>
-          </select>
-
-          <select
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-          </select>
-        </div>
+        <ReportFilters
+  search={search}
+  setSearch={setSearch}
+  area={area}
+  setArea={setArea}
+  type={type}
+  setType={setType}
+  sort={sort}
+  setSort={setSort}
+  setPage={setPage}
+/>
 
         {!loading && !error && (
           <p className="result-count">{total} reports found</p>
