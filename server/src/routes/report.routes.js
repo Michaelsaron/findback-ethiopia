@@ -1,7 +1,7 @@
 
 const express = require("express");
 const Report = require("../models/Report");
-
+const mongoose = require("mongoose");
 const router = express.Router();
 
 // ============================================
@@ -45,6 +45,47 @@ router.get("/", async (req, res) => {
     };
   }
 }
+
+// GET /api/v1/reports/:id
+// Retrieve one report by its MongoDB ID
+
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check whether the ID has a valid MongoDB format
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report ID",
+      });
+    }
+
+    // Search MongoDB for the report
+    const report = await Report.findById(id);
+
+    // The ID is valid, but the report doesn't exist
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found",
+      });
+    }
+
+    // Return the report
+    return res.status(200).json({
+      success: true,
+      data: report,
+    });
+  } catch (error) {
+    console.error("Get report error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve report",
+    });
+  }
+});
 
     // Filter by report type
     if (type) {
