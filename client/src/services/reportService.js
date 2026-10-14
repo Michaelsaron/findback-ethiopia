@@ -1,4 +1,3 @@
-
 const API_URL = "http://localhost:5001/api/v1/reports";
 
 export async function getReports({
@@ -8,12 +7,12 @@ export async function getReports({
   search = "",
   area = "",
   type = "",
-  signal
+  signal,
 } = {}) {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
-    sort
+    sort,
   });
 
   if (search.trim()) {
@@ -28,14 +27,31 @@ export async function getReports({
     params.set("type", type);
   }
 
-  const response = await fetch(
-    `${API_URL}?${params.toString()}`,
-    { signal }
-  );
+  const response = await fetch(`${API_URL}?${params.toString()}`, {
+    signal,
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch reports");
   }
 
   return response.json();
+}
+
+export async function createReport(reportData) {
+  const response = await fetch("http://localhost:5001/api/v1/reports", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(reportData),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to create report");
+  }
+
+  return result;
 }

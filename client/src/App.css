@@ -169,3 +169,130 @@
     grid-template-columns: 1fr;
   }
 }
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 24px 0;
+}
+
+.report-actions button {
+  background-color: #b45309;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.report-actions button:hover {
+  background-color: #92400e;
+}
+
+/* ==================================
+   REPORT SUBMISSION FORM
+================================== */
+
+.report-form {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 28px;
+  margin: 24px 0 32px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.report-form h2 {
+  font-size: 22px;
+  color: #1e293b;
+  margin: 0 0 24px;
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 28px;
+  margin: 24px 0 32px;
+  max-width: 720px;
+}
+
+.report-form h2 {
+  margin: 0 0 12px;
+}
+
+.report-form label {
+  margin: 8px 0 0;
+}
+
+.report-form input,
+.report-form select,
+.report-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.report-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.report-form input,
+.report-form select,
+.report-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  font: inherit;
+}
+
+.report-form input:focus,
+.report-form select:focus,
+.report-form textarea:focus {
+  outline: none;
+  border-color: #b45309;
+  box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.12);
+}
+
+.report-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.report-form button[type="submit"] {
+  background: #b45309;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.report-form button[type="submit"]:hover {
+  background: #92400e;
+}
+
+.report-form button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mobile responsive form */
+@media (max-width: 640px) {
+  .report-form {
+    padding: 18px;
+  }
+}
