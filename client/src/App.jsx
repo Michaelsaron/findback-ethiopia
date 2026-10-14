@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import "./App.css";
+import ReportCard from "./components/ReportCard";
 
 const API_URL = "http://localhost:5001/api/v1/reports";
 
@@ -139,30 +140,14 @@ function App() {
         {!loading && !error && (
           <div className="reports-grid">
             {reports.map((report) => (
-              <article className="report-card" key={report._id}>
-                <div className="card-top">
-                  <span className={`type ${report.type}`}>
-                    {report.type}
-                  </span>
-                  <span className="status">{report.status}</span>
-                </div>
+               <ReportCard
+                    key={report._id}
+                   report={report}
+                       />
+             ))}
 
-                <h3>{report.title}</h3>
 
-                <p className="description">
-                  {report.description || "No description provided."}
-                </p>
 
-                <div className="card-details">
-                  <p>Category: {report.category}</p>
-                  <p>Area: {report.location?.area || "Unknown"}</p>
-                  <p>
-                    Reported:{" "}
-                    {new Date(report.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </article>
-            ))}
           </div>
         )}
 
