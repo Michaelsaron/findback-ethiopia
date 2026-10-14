@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import ReportCard from "./components/ReportCard";
 import ReportFilters from "./components/ReportFilters";
+import Pagination from "./components/Pagination";
 
 
 const API_URL = "http://localhost:5001/api/v1/reports";
@@ -123,25 +124,11 @@ function App() {
         )}
 
         {!loading && !error && totalPages > 1 && (
-          <div className="pagination">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Previous
-            </button>
-
-            <span>
-              Page {page} of {totalPages}
-            </span>
-
-            <button
-              disabled={page >= totalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </button>
-          </div>
+          <Pagination
+  page={page}
+  totalPages={totalPages}
+  setPage={setPage}
+/>
         )}
       </main>
     </div>
