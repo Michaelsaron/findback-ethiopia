@@ -55,3 +55,18 @@ export async function createReport(reportData) {
 
   return result;
 }
+// GET /api/v1/reports/:id
+// Fetch one report using its MongoDB ID
+export async function getReportById(id, signal) {
+  const response = await fetch(`${API_URL}/${encodeURIComponent(id)}`, {
+  signal,
+});
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to fetch report");
+  }
+
+  return result.data;
+}
