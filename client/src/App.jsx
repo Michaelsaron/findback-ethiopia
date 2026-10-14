@@ -4,6 +4,7 @@ import "./App.css";
 import ReportCard from "./components/ReportCard";
 import ReportFilters from "./components/ReportFilters";
 import Pagination from "./components/Pagination";
+import { getReports } from "./services/reportService";
 
 
 const API_URL = "http://localhost:5001/api/v1/reports";
@@ -20,57 +21,46 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const controller = new AbortController();
+  
+useEffect(() => {
+  const controller = new AbortController();
 
-    async function fetchReports() {
-      setLoading(true);
-      setError("");
+  async function fetchReports() {
+    setLoading(true);
+    setError("");
 
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: "2",
-        sort
+    try {
+      const result = await getReports({
+        page,
+        limit: 2,
+        sort,
+        search,
+        area,
+        type,
+        signal: controller.signal
       });
 
-      if (search.trim()) params.set("search", search.trim());
-      if (area.trim()) params.set("area", area.trim());
-      if (type) params.set("type", type);
+      if (controller.signal.aborted) return;
 
-      try {
-        const response = await fetch(
-          `${API_URL}?${params.toString()}`,
-          { signal: controller.signal }
-        );
+      setReports(result.data);
+      setTotal(result.total);
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      if (controller.signal.aborted) return;
 
-        if (!response.ok) {
-          throw new Error("Failed to load reports");
-        }
-
-        const result = await response.json();
-
-        setReports(result.data);
-        setTotalPages(result.totalPages);
-        setTotal(result.total);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+      setError(error.message);
+    } finally {
+      if (!controller.signal.aborted) {
+        setLoading(false);
       }
     }
+  }
 
-    // Small delay so we don't request on every keystroke
-    const timer = setTimeout(fetchReports, 300);
+  fetchReports();
 
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [search, area, type, sort, page]);
+  return () => controller.abort();
+}, [page, sort, search, area, type]);
+
 
   return (
     <div className="app">

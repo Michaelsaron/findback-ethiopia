@@ -27,8 +27,24 @@ router.get("/", async (req, res) => {
 
     // Filter by area
     if (area) {
-      filter["location.area"] = area;
-    }
+  if (typeof area !== "string" || area.trim().length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Area must be text up to 100 characters"
+    });
+  }
+
+  const safeArea = area
+    .trim()
+    .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  if (safeArea) {
+    filter["location.area"] = {
+      $regex: safeArea,
+      $options: "i"
+    };
+  }
+}
 
     // Filter by report type
     if (type) {
