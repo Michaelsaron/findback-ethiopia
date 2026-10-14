@@ -2,6 +2,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import ReportCard from "./components/ReportCard";
+import ReportFilters from "./components/ReportFilters";
+import Pagination from "./components/Pagination";
+import { getReports } from "./services/reportService";
+
 
 const API_URL = "http://localhost:5001/api/v1/reports";
 
@@ -17,57 +21,46 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const controller = new AbortController();
+  
+useEffect(() => {
+  const controller = new AbortController();
 
-    async function fetchReports() {
-      setLoading(true);
-      setError("");
+  async function fetchReports() {
+    setLoading(true);
+    setError("");
 
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: "2",
-        sort
+    try {
+      const result = await getReports({
+        page,
+        limit: 2,
+        sort,
+        search,
+        area,
+        type,
+        signal: controller.signal
       });
 
-      if (search.trim()) params.set("search", search.trim());
-      if (area.trim()) params.set("area", area.trim());
-      if (type) params.set("type", type);
+      if (controller.signal.aborted) return;
 
-      try {
-        const response = await fetch(
-          `${API_URL}?${params.toString()}`,
-          { signal: controller.signal }
-        );
+      setReports(result.data);
+      setTotal(result.total);
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      if (controller.signal.aborted) return;
 
-        if (!response.ok) {
-          throw new Error("Failed to load reports");
-        }
-
-        const result = await response.json();
-
-        setReports(result.data);
-        setTotalPages(result.totalPages);
-        setTotal(result.total);
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+      setError(error.message);
+    } finally {
+      if (!controller.signal.aborted) {
+        setLoading(false);
       }
     }
+  }
 
-    // Small delay so we don't request on every keystroke
-    const timer = setTimeout(fetchReports, 300);
+  fetchReports();
 
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [search, area, type, sort, page]);
+  return () => controller.abort();
+}, [page, sort, search, area, type]);
+
 
   return (
     <div className="app">
@@ -82,48 +75,17 @@ function App() {
           <p>Search for lost items or browse found belongings.</p>
         </div>
 
-        <div className="filters">
-          <input
-            placeholder="Search items..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-
-          <input
-            placeholder="Area (e.g. Megenagna)"
-            value={area}
-            onChange={(e) => {
-              setArea(e.target.value);
-              setPage(1);
-            }}
-          />
-
-          <select
-            value={type}
-            onChange={(e) => {
-              setType(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">All reports</option>
-            <option value="lost">Lost</option>
-            <option value="found">Found</option>
-          </select>
-
-          <select
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-          </select>
-        </div>
+        <ReportFilters
+  search={search}
+  setSearch={setSearch}
+  area={area}
+  setArea={setArea}
+  type={type}
+  setType={setType}
+  sort={sort}
+  setSort={setSort}
+  setPage={setPage}
+/>
 
         {!loading && !error && (
           <p className="result-count">{total} reports found</p>
@@ -152,25 +114,11 @@ function App() {
         )}
 
         {!loading && !error && totalPages > 1 && (
-          <div className="pagination">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Previous
-            </button>
-
-            <span>
-              Page {page} of {totalPages}
-            </span>
-
-            <button
-              disabled={page >= totalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </button>
-          </div>
+          <Pagination
+  page={page}
+  totalPages={totalPages}
+  setPage={setPage}
+/>
         )}
       </main>
     </div>
