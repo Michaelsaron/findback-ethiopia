@@ -1,4 +1,4 @@
-
+const protect = require("../middleware/auth.middleware");
 const express = require("express");
 const Report = require("../models/Report");
 
@@ -178,7 +178,7 @@ router.get("/", async (req, res) => {
 // Create a new lost or found report
 // ============================================
 
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
   try {
     const {
       type,

@@ -55,3 +55,20 @@ export async function createReport(reportData) {
 
   return result;
 }
+
+// GET /api/v1/reports/:id
+// Fetch one report from the backend using its ID
+export async function getReportById(id, signal) {
+  const response = await fetch(
+    `http://localhost:5001/api/v1/reports/${encodeURIComponent(id)}`,
+    { signal }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to fetch report");
+  }
+
+  return result.data;
+}

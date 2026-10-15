@@ -1,7 +1,20 @@
+/* ==================================
+   LAYOUT & CONTAINER
+================================== */
 
 .app {
   min-height: 100vh;
 }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 45px 24px;
+}
+
+/* ==================================
+   HEADER
+================================== */
 
 .header {
   background: #ffffff;
@@ -19,11 +32,9 @@
   color: #64748b;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 45px 24px;
-}
+/* ==================================
+   SECTION HEADINGS
+================================== */
 
 .section-heading {
   margin-bottom: 28px;
@@ -36,6 +47,10 @@
 .section-heading p {
   color: #64748b;
 }
+
+/* ==================================
+   REPORTS GRID & CARD
+================================== */
 
 .reports-grid {
   display: grid;
@@ -57,6 +72,24 @@
   gap: 10px;
 }
 
+.report-card h3 {
+  margin: 22px 0 10px;
+}
+
+.description {
+  color: #475569;
+  min-height: 44px;
+}
+
+.card-details {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Badges */
 .type {
   padding: 6px 12px;
   border-radius: 20px;
@@ -81,38 +114,34 @@
   text-transform: capitalize;
 }
 
-.report-card h3 {
-  margin: 22px 0 10px;
+/* Title link (used in cards) */
+.report-title-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.description {
-  color: #475569;
-  min-height: 44px;
+.report-title-link:hover {
+  color: #b45309;
+  text-decoration: underline;
 }
 
-.card-details {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-  font-size: 14px;
-  color: #64748b;
-}
+/* ==================================
+   ERROR & MISC
+================================== */
 
 .error {
   color: #b91c1c;
 }
 
-@media (max-width: 800px) {
-  .reports-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.result-count {
+  color: #64748b;
+  margin-bottom: 20px;
 }
 
-@media (max-width: 550px) {
-  .reports-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* ==================================
+   FILTERS
+================================== */
 
 .filters {
   display: grid;
@@ -131,10 +160,9 @@
   background: white;
 }
 
-.result-count {
-  color: #64748b;
-  margin-bottom: 20px;
-}
+/* ==================================
+   PAGINATION
+================================== */
 
 .pagination {
   display: flex;
@@ -158,17 +186,10 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 800px) {
-  .filters {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
+/* ==================================
+   REPORT ACTIONS (e.g. "New Report" button)
+================================== */
 
-@media (max-width: 550px) {
-  .filters {
-    grid-template-columns: 1fr;
-  }
-}
 .report-actions {
   display: flex;
   justify-content: flex-end;
@@ -195,45 +216,22 @@
 ================================== */
 
 .report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
   padding: 28px;
   margin: 24px 0 32px;
+  max-width: 720px;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
 }
 
 .report-form h2 {
+  margin: 0 0 12px;
   font-size: 22px;
   color: #1e293b;
-  margin: 0 0 24px;
-}
-
-.report-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 28px;
-  margin: 24px 0 32px;
-  max-width: 720px;
-}
-
-.report-form h2 {
-  margin: 0 0 12px;
-}
-
-.report-form label {
-  margin: 8px 0 0;
-}
-
-.report-form input,
-.report-form select,
-.report-form textarea {
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .report-form label {
@@ -241,7 +239,7 @@
   font-size: 14px;
   font-weight: 600;
   color: #334155;
-  margin-bottom: 8px;
+  margin: 8px 0 8px;
 }
 
 .report-form input,
@@ -290,9 +288,120 @@
   cursor: not-allowed;
 }
 
-/* Mobile responsive form */
+/* ==================================
+   REPORT DETAILS PAGE
+================================== */
+
+.details-page {
+  max-width: 850px;
+  margin: 50px auto;
+  padding: 0 24px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: #b45309;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.details-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.details-card h1 {
+  font-size: 32px;
+  color: #1e293b;
+  margin: 20px 0;
+}
+
+.details-description {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 28px;
+}
+
+.details-info {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.details-info p {
+  margin: 0;
+  color: #475569;
+}
+
+.details-info strong {
+  color: #1e293b;
+}
+
+.report-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.report-badge.lost {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.report-badge.found {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* ==================================
+   RESPONSIVE / MEDIA QUERIES
+================================== */
+
+@media (max-width: 800px) {
+  .reports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 640px) {
   .report-form {
     padding: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .details-page {
+    margin: 24px auto;
+    padding: 0 16px;
+  }
+
+  .details-card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 550px) {
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
   }
 }

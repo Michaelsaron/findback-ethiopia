@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 function ReportCard({ report }) {
   return (
@@ -12,7 +13,14 @@ function ReportCard({ report }) {
         </span>
       </div>
 
-      <h3>{report.title}</h3>
+      <h3>
+  <Link
+    to={`/reports/${report._id}`}
+    className="report-title-link"
+  >
+    {report.title}
+  </Link>
+</h3>
 
       <p className="description">
         {report.description || "No description provided."}

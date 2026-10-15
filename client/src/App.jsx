@@ -6,11 +6,13 @@ import ReportFilters from "./components/ReportFilters";
 import Pagination from "./components/Pagination";
 import { getReports } from "./services/reportService";
 import ReportForm from "./components/ReportForm";
-
+import AuthPage from "./pages/AuthPage";
+import { Routes, Route } from "react-router-dom";
+import ReportDetails from "./pages/ReportDetails.jsx";
 
 const API_URL = "http://localhost:5001/api/v1/reports";
 
-function App() {
+function ReportsPage() {
   const [reports, setReports] = useState([]);
   const [search, setSearch] = useState("");
   const [area, setArea] = useState("");
@@ -155,4 +157,14 @@ return (
   </div>
 );
 }
-export default App;
+function AppRoutes() {
+  return (
+    <Routes>
+  <Route path="/" element={<ReportsPage />} />
+  <Route path="/reports/:id" element={<ReportDetails />} />
+  <Route path="/auth" element={<AuthPage />} />
+</Routes>
+  );
+}
+
+export default AppRoutes;
