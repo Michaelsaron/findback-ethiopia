@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createReport } from "../services/reportService";
+import { useAuth } from "../context/AuthContext";
 
 function ReportForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ function ReportForm({ onSuccess }) {
     landmark: "",
     eventDate: "",
   });
-  
+  const { token } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -46,7 +47,11 @@ function ReportForm({ onSuccess }) {
       eventDate: formData.eventDate,
     };
 
-    await createReport(payload);
+    if (!token) {
+  throw new Error("Please log in before submitting a report.");
+}
+
+await createReport(payload, token);
 
     setSuccess("Your report was submitted successfully!");
 

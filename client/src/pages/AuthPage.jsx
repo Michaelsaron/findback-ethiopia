@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function AuthPage() {
@@ -10,8 +11,11 @@ export default function AuthPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const isLogin = mode === "login";
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -19,105 +23,151 @@ export default function AuthPage() {
     setLoading(true);
 
     try {
-      if (mode === "register") {
-        await register({ name, email, password });
+      if (isLogin) {
+        await login({ email: email.trim(), password });
       } else {
-        await login({ email, password });
+        await register({
+          name: name.trim(),
+          email: email.trim(),
+          password,
+        });
       }
 
-      navigate("/");
+      navigate("/reports", { replace: true });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
   function switchMode() {
-    setMode((previous) =>
-      previous === "login" ? "register" : "login"
-    );
+    setMode((previous) => previous === "login" ? "register" : "login");
     setError("");
+    setPassword("");
   }
 
   return (
-    <main className="auth-page">
-      <section className="auth-card">
-        <h1>
-          {mode === "login"
-            ? "Welcome Back"
-            : "Create an Account"}
-        </h1>
+    <main className="auth-layout">
+      <section className="auth-story">
+        <Link className="auth-back" to="/">← Back to home</Link>
 
-        <p>
-          {mode === "login"
-            ? "Log in to FindBack Ethiopia."
-            : "Join FindBack Ethiopia to help recover lost items."}
-        </p>
+        <div className="auth-story-content">
+          <span className="eyebrow">FIND BACK WHAT MATTERS</span>
+          <h1>Better together.<br />Stronger as a community.</h1>
+          <p>
+            Every lost item matters to someone. Join your community
+            in helping belongings find their way home.
+          </p>
 
-        <form onSubmit={handleSubmit}>
-          {mode === "register" && (
+          <div className="auth-story-location">
+            <span>⌖</span>
+            Proudly serving Addis Ababa, Ethiopia
+          </div>
+        </div>
+
+        <div className="auth-story-bottom">
+          <span>FindBack Ethiopia</span>
+          <span>Community • Care • Connection</span>
+        </div>
+      </section>
+
+      <section className="auth-form-side">
+        <div className="auth-card">
+          <div className="auth-mobile-brand">FindBack Ethiopia</div>
+
+          <span className="eyebrow">YOUR COMMUNITY ACCOUNT</span>
+          <h1>{isLogin ? "Welcome back" : "Create your account"}</h1>
+          <p className="auth-subtitle">
+            {isLogin
+              ? "Sign in to report items and help your community."
+              : "Join FindBack Ethiopia and start making a difference."}
+          </p>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            {!isLogin && (
+              <div className="auth-field">
+                <label htmlFor="auth-name">Full name</label>
+                <input
+                  id="auth-name"
+                  type="text"
+                  placeholder="Your full name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  autoComplete="name"
+                  required
+                />
+              </div>
+            )}
+
             <div className="auth-field">
-              <label htmlFor="auth-name">Full Name</label>
+              <label htmlFor="auth-email">Email address</label>
               <input
-                id="auth-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                id="auth-email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="email"
                 required
-                autoComplete="name"
               />
             </div>
-          )}
 
-          <div className="auth-field">
-            <label htmlFor="auth-email">Email</label>
-            <input
-              id="auth-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-          </div>
+            <div className="auth-field">
+              <label htmlFor="auth-password">Password</label>
+              <div className="password-field">
+                <input
+                  id="auth-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete={isLogin ? "current-password" : "new-password"}
+                  minLength={8}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword((previous) => !previous)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              {!isLogin && (
+                <small>Use at least 8 characters.</small>
+              )}
+            </div>
 
-          <div className="auth-field">
-            <label htmlFor="auth-password">Password</label>
-            <input
-              id="auth-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              autoComplete={
-                mode === "login"
-                  ? "current-password"
-                  : "new-password"
-              }
-            />
-          </div>
+            {error && (
+              <p className="auth-error" role="alert">{error}</p>
+            )}
 
-          {error && <p role="alert" className="auth-error">{error}</p>}
+            <button
+              className="auth-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading
+                ? "Please wait..."
+                : isLogin
+                ? "Log In →"
+                : "Create Account →"}
+            </button>
+          </form>
 
-          <button type="submit" disabled={loading}>
-            {loading
-              ? "Please wait..."
-              : mode === "login"
-              ? "Log In"
-              : "Create Account"}
-          </button>
-        </form>
+          <div className="auth-divider"><span>OR</span></div>
 
-        <p className="auth-switch">
-          {mode === "login"
-            ? "Don't have an account?"
-            : "Already have an account?"}
-
-          <button type="button" onClick={switchMode}>
-            {mode === "login" ? "Register" : "Log In"}
-          </button>
-        </p>
+          <p className="auth-switch">
+            {isLogin
+              ? "New to FindBack Ethiopia?"
+              : "Already have an account?"}
+            <button type="button" onClick={switchMode}>
+              {isLogin ? "Create an account" : "Log in"}
+            </button>
+          </p>
+        </div>
       </section>
     </main>
   );

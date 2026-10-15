@@ -38,14 +38,18 @@ export async function getReports({
   return response.json();
 }
 
-export async function createReport(reportData) {
-  const response = await fetch("http://localhost:5001/api/v1/reports", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(reportData),
-  });
+export async function createReport(reportData, token) {
+  const response = await fetch(
+    "http://localhost:5001/api/v1/reports",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reportData),
+    }
+  );
 
   const result = await response.json();
 
