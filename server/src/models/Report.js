@@ -49,7 +49,13 @@ const reportSchema = new mongoose.Schema(
       type: String,
       enum: ["open", "resolved"],
       default: "open"
-    }
+    },
+    createdBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+  required: true,
+  index: true
+}
   },
   {
     timestamps: true

@@ -6,6 +6,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const reportRoutes = require("./routes/report.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 // Reports API
 app.use("/api/v1/reports", reportRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 // Health API
 app.get("/api/v1/health", (req, res) => {
