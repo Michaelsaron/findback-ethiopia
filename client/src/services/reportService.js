@@ -76,3 +76,47 @@ export async function getReportById(id, signal) {
 
   return result.data;
 }
+
+async function reportRequest(path, token, options = {}) {
+  if (!token) {
+    throw new Error("Please log in again.");
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...options.headers,
+    },
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Request failed");
+  }
+
+  return result;
+}
+
+export function getMyReports(token) {
+  return reportRequest("/mine", token);
+}
+
+export function updateReport(id, data, token) {
+  return reportRequest(`/${encodeURIComponent(id)}`, token, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}
+
+export function resolveReport(id, token) {
+  return updateReport(id, { status: "resolved" }, token);
+}
+
+export function deleteReport(id, token) {
+  return reportRequest(`/${encodeURIComponent(id)}`, token, {
+    method: "DELETE",
+  });
+}

@@ -12,6 +12,7 @@ import ReportDetails from "./pages/ReportDetails";
 import AuthPage from "./pages/AuthPage";
 import { getReports } from "./services/reportService";
 import { useAuth } from "./context/AuthContext";
+import MyReports from "./pages/MyReports";
 
 function SiteHeader() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -27,6 +28,9 @@ function SiteHeader() {
         <nav className="site-nav" aria-label="Main navigation">
           <NavLink to="/" end>Home</NavLink>
           <NavLink to="/reports">Browse Reports</NavLink>
+          {isAuthenticated && (
+  <NavLink to="/my-reports">My Reports</NavLink>
+)}
           {isAuthenticated ? (
             <>
               <span className="nav-user">Hi, {user?.name}</span>
@@ -307,6 +311,7 @@ export default function AppRoutes() {
     <div className="site-shell">
       <SiteHeader />
       <Routes>
+        <Route path="/my-reports" element={<MyReports />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/reports/:id" element={<ReportDetails />} />
