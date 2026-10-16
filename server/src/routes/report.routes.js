@@ -285,4 +285,183 @@ router.post("/", protect, async (req, res) => {
   }
 });
 
+
+/**
+ * PATCH /api/v1/reports/:id
+ * Edit or resolve a report.
+ * Only its owner can make changes.
+ */
+router.patch("/:id", protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report ID"
+      });
+    }
+
+    // Only allow these fields to be changed.
+    const allowedFields = [
+      "type",
+      "title",
+      "category",
+      "description",
+      "location",
+      "eventDate",
+      "status"
+    ];
+
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid update object is required"
+      });
+    }
+
+    const fields = Object.keys(req.body);
+
+    if (
+      fields.length === 0 ||
+      fields.some((field) => !allowedFields.includes(field))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or empty report update"
+      });
+    }
+
+    const updates = {};
+
+    for (const field of fields) {
+      updates[field] = req.body[field];
+    }
+
+    // Prevent nested MongoDB update operators.
+    if (Object.prototype.hasOwnProperty.call(updates, "location")) {
+      const location = updates.location;
+
+      if (
+        !location ||
+        typeof location !== "object" ||
+        Array.isArray(location) ||
+        Object.keys(location).some(
+          (key) => !["city", "area", "landmark"].includes(key)
+        )
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid location"
+        });
+      }
+
+      // Preserve other location fields during partial updates.
+      const existing = await Report.findOne({
+        _id: id,
+        createdBy: req.user._id
+      });
+
+      if (!existing) {
+        return res.status(404).json({
+          success: false,
+          message: "Report not found or not owned by you"
+        });
+      }
+
+      updates.location = {
+        ...existing.location.toObject(),
+        ...location
+      };
+    }
+
+    const report = await Report.findOneAndUpdate(
+      {
+        _id: id,
+        createdBy: req.user._id
+      },
+      { $set: updates },
+      {
+        new: true,
+        runValidators: true,
+        context: "query"
+      }
+    );
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found or not owned by you"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Report updated successfully",
+      data: report
+    });
+  } catch (error) {
+    if (
+      error.name === "ValidationError" ||
+      error.name === "CastError"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report data"
+      });
+    }
+
+    console.error("Update report error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update report"
+    });
+  }
+});
+
+/**
+ * DELETE /api/v1/reports/:id
+ * Only the report owner can delete it.
+ */
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report ID"
+      });
+    }
+
+    const report = await Report.findOneAndDelete({
+      _id: id,
+      createdBy: req.user._id
+    });
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found or not owned by you"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Report deleted successfully"
+    });
+  } catch (error) {
+    console.error("Delete report error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete report"
+    });
+  }
+});
 module.exports = router;
