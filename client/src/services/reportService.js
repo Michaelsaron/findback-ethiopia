@@ -38,14 +38,18 @@ export async function getReports({
   return response.json();
 }
 
-export async function createReport(reportData) {
-  const response = await fetch("http://localhost:5001/api/v1/reports", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(reportData),
-  });
+export async function createReport(reportData, token) {
+  const response = await fetch(
+    "http://localhost:5001/api/v1/reports",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reportData),
+    }
+  );
 
   const result = await response.json();
 
@@ -54,4 +58,21 @@ export async function createReport(reportData) {
   }
 
   return result;
+}
+
+// GET /api/v1/reports/:id
+// Fetch one report from the backend using its ID
+export async function getReportById(id, signal) {
+  const response = await fetch(
+    `http://localhost:5001/api/v1/reports/${encodeURIComponent(id)}`,
+    { signal }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Failed to fetch report");
+  }
+
+  return result.data;
 }

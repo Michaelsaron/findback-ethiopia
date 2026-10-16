@@ -6,17 +6,24 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const reportRoutes = require("./routes/report.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
-app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"]
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5180",
+    ],
+  })
+);
 
 app.use(express.json());
 
 // Reports API
 app.use("/api/v1/reports", reportRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 // Health API
 app.get("/api/v1/health", (req, res) => {

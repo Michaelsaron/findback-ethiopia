@@ -1,5 +1,6 @@
-
+const protect = require("../middleware/auth.middleware");
 const express = require("express");
+const mongoose = require("mongoose");
 const Report = require("../models/Report");
 
 const router = express.Router();
@@ -45,6 +46,47 @@ router.get("/", async (req, res) => {
     };
   }
 }
+
+// GET /api/v1/reports/:id
+// Retrieve a single report using its MongoDB ID
+
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check whether the ID is a valid MongoDB ObjectId
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report ID",
+      });
+    }
+
+    // Search MongoDB for the report
+    const report = await Report.findById(id);
+
+    // The ID is valid, but no report exists
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found",
+      });
+    }
+
+    // Report found successfully
+    return res.status(200).json({
+      success: true,
+      data: report,
+    });
+  } catch (error) {
+    console.error("Error fetching report:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch report",
+    });
+  }
+});
 
     // Filter by report type
     if (type) {
@@ -178,7 +220,7 @@ router.get("/", async (req, res) => {
 // Create a new lost or found report
 // ============================================
 
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
   try {
     const {
       type,
